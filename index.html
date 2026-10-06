@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2e7151"><title>Seed Library · 随身资料库</title>
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css"><script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><img src="./icon.svg" alt="" width="36" height="36"><span>Seed Library<small>随身资料库 <b>测试版</b></small></span></a><span id="offline" class="status">本地优先</span></header>
+  <main>
+    <section id="library" class="page">
+      <div class="heading"><div><p class="eyebrow">灵感，随身带着。</p><h1>我的资料</h1></div><button id="collect" class="primary">＋ 收藏链接</button></div>
+      <p id="library-meta" class="muted"></p>
+      <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索标题、原文、标签…" aria-label="搜索资料"></label>
+      <div id="filters" class="filters" aria-label="来源筛选"></div>
+      <div id="cards" class="cards"></div>
+      <div id="empty-library" class="empty" hidden><div class="empty-leaf">✳</div><h2>把电脑里的灵感带过来</h2><p>导入资料快照，离线也能翻看文字、<br>笔记和缩略图。视频暂留在电脑或云盘。</p><button class="primary" data-page="sync">导入已有资料</button><button class="text-button" id="empty-collect">先收藏一个链接 →</button></div>
+    </section>
+    <section id="inbox" class="page" hidden>
+      <div class="heading"><div><p class="eyebrow">看到喜欢的，先留下。</p><h1>手机收藏 <span id="inbox-count"></span></h1></div><button id="inbox-collect" class="primary">＋ 收藏</button></div>
+      <div class="notice"><span class="dot"></span><p>链接已保存在这台设备。导出清单交给电脑收录后，才会进入主资料库。</p></div>
+      <div id="inbox-list"></div><div id="empty-inbox" class="empty" hidden><h2>下一条灵感，在路上</h2><p>复制四个平台的分享文字，粘贴进来。<br>不需要现在解析，也不需要联网。</p></div>
+      <button id="export-inbox" class="primary wide">导出手机收藏清单</button>
+    </section>
+    <section id="sync" class="page" hidden>
+      <div class="heading"><div><p class="eyebrow">轻装上路，不搬整个硬盘。</p><h1>资料交换</h1></div></div>
+      <div class="sync-card featured"><div class="card-number">01</div><h2>电脑资料 → 手机</h2><p>导入电脑导出的 <strong>mobile-library.json</strong>。新快照会更新资料列表，手机收藏会保留。</p><label class="file-button primary">选择资料快照<input type="file" id="import-snapshot" accept=".json,application/json"></label><button id="local-import" class="secondary" hidden>从本机资料库导入</button><p id="snapshot-info" class="footnote"></p></div>
+      <div class="sync-card"><div class="card-number">02</div><h2>手机收藏 → 电脑</h2><p>导出收藏清单，可用 Google Drive 或文件传输交给电脑。这一步不会自动上传，也不会立即下载视频。</p><button id="sync-export" class="secondary">导出收藏清单</button></div>
+      <details class="sync-card"><summary>用 Google Drive 传递文件 <span>↗</span></summary><ol><li>电脑导出资料快照，上传到你自己的 Drive。</li><li>手机从 Drive 下载这个 JSON，再点击上方「选择资料快照」。</li><li>手机新增收藏后导出清单，再存到 Drive 交给电脑。</li></ol><p class="footnote">本版采用文件交换，还没有自动云端同步。你的资料不会进入测试网页的服务器。</p></details>
+      <div class="sync-card"><h2>留在手机，也留一份备份</h2><p id="storage-info">正在检查本地存储…</p><div class="actions"><button id="persist" class="secondary">申请保留本地数据</button><button id="backup" class="secondary">导出完整备份</button><label class="file-button secondary">恢复备份<input id="restore" type="file" accept=".json,application/json"></label></div><p class="footnote">清理浏览器数据或卸载网页应用可能删除本地收藏。浏览器是否长期保留数据，由系统决定。</p></div>
+      <details class="sync-card"><summary>添加到 Android 主屏幕</summary><p>用 Chrome 打开 HTTPS 测试地址，在菜单选择「添加到主屏幕 / 安装应用」。安装后可以离线打开；支持时会出现在系统分享菜单中。</p><p class="footnote">局域网 HTTP 地址不具备完整 PWA 安装条件。本机 localhost 仅供开发验证。</p></details>
+      <p class="version">LOCAL FIRST · MOBILE EXPERIMENT 01</p>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="主导航"><button data-page="library" class="active"><span>▦</span>资料库</button><button data-page="inbox"><span>↙</span>手机收藏<i id="queue-badge" hidden></i></button><button data-page="sync"><span>⇄</span>资料交换</button></nav>
+  <dialog id="capture-dialog"><form id="capture-form"><div class="dialog-heading"><h2>留下这条灵感</h2><button type="button" class="close" data-close="capture-dialog" aria-label="关闭">×</button></div><p class="muted">先存到手机，之后再整理。</p><label>分享链接或文字<textarea id="share-text" rows="4" required placeholder="粘贴 X、YouTube、B站或小红书分享文字"></textarea></label><label>起个好找的名字 <small>选填</small><input id="share-title" maxlength="300" placeholder="例如：手势控制的视觉交互"></label><label>为什么想留下它 <small>选填</small><textarea id="share-note" maxlength="3000" rows="2" placeholder="写一句给未来自己的提示…"></textarea></label><p id="capture-error" class="error" role="alert"></p><button type="submit" class="primary wide">保存到手机</button></form></dialog>
+  <dialog id="detail-dialog"><div class="dialog-heading"><span class="eyebrow">资料详情</span><button class="close" data-close="detail-dialog" aria-label="关闭详情">×</button></div><div id="detail-content"></div></dialog>
+  <dialog id="export-dialog"><div class="dialog-heading"><h2>带走手机收藏</h2><button class="close" data-close="export-dialog" aria-label="关闭导出">×</button></div><p id="export-info" class="muted"></p><div class="actions"><button id="share-inbox" class="primary" hidden>分享文件到…</button><button id="download-inbox" class="secondary">下载 JSON 文件</button><button id="copy-inbox" class="secondary">复制清单内容</button></div><p class="footnote">支持文件分享时，可以选择 Google Drive。下载没有响应时，可复制清单内容，保存为 .json 文件交给电脑。</p><label>收藏清单<textarea id="export-content" rows="6" readonly></textarea></label></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body></html>
