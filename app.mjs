@@ -84,7 +84,11 @@ window.addEventListener('online', connection); window.addEventListener('offline'
 try {
   db = await new Promise((res, rej) => { const req = indexedDB.open('seed-library-mobile-lab', 1); req.onupgradeneeded = () => req.result.createObjectStore('app'); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); });
   const saved = await transact('readonly', (store, set) => { const req = store.get('state'); req.onsuccess = () => set(req.result); }); if (saved) state = saved; render();
-  const params = new URLSearchParams(location.search); if (params.has('text') || params.has('url')) { $('share-text').value = [params.get('text'), params.get('url')].filter(Boolean).join('\n'); $('share-title').value = params.get('title') || ''; openCapture(); }
+  if (location.hash.startsWith('#share=')) {
+    try { const shared = JSON.parse(decodeURIComponent(location.hash.slice(7))); $('share-text').value = [shared.text, shared.url].filter(v => typeof v === 'string').join('\n'); $('share-title').value = typeof shared.title === 'string' ? shared.title.slice(0, 300) : ''; openCapture(); }
+    catch { toast('分享内容未识别，请手动粘贴链接。'); }
+    history.replaceState(null, '', location.pathname);
+  }
   if (['127.0.0.1', 'localhost'].includes(location.hostname)) { try { const r = await fetch('./__local/status', { cache: 'no-store' }); if (r.ok && (await r.json()).snapshotAvailable) $('local-import').hidden = false; } catch {} }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => toast('离线页面缓存未完成，请联网重新打开；本地收藏仍可保存。'));
 } catch (e) { toast('本地存储或离线初始化失败：' + e.message); for (const id of ['collect', 'inbox-collect', 'empty-collect']) $(id).disabled = true; }
